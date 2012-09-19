@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper  
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"  
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">  
+<mapper namespace="com.wereach.vi.model.ComputeResourceMapper"> 
+	  <cache/> 
+	  <resultMap id="DataCenterResult" type="DataCenter"> 
+			<id property="id" column="dc_id" /> 
+		    <result property="name" column="dc_name"/> 
+		    <collection property="dataStores" ofType="DataStore"> 
+			    <id property="id" column="ds_id" /> 
+			    <result property="name" column="ds_name"/> 
+		    </collection>
+	  </resultMap>
+	  <select id="selectDc" parameterType="int" resultType="DataCenter"> 
+	    select * from DataCenter where id = #{id}  
+	  </select>  
+	  <select id="selectDcByName" parameterType="String" resultMap="DataCenterResult"> 
+	    select 
+		    dc.id as dc_id, 
+		    dc.name as dc_name, 
+		    ds.id as ds_id, 
+		    ds.name as ds_name
+		    from DataCenter dc 
+		    left outer join DataStore ds on dc.id = ds.dcId 
+		    where dc.name = #{name} 
+	  </select> 
+	  <select id="selectAll" resultType="DataCenter"> 
+	    select * from DataCenter  
+	  </select>
+	    <insert id="insertDc" parameterType="DataCenter">
+			 <selectKey keyProperty="id" resultType="int" order="BEFORE">
+		      SELECT nextVal('dc_id_seq')
+		    </selectKey>	   
+	    insert into DataCenter (id,name) 
+	    values (#{id},#{name}) 
+	  </insert> 
+	  <insert id="updateDc" parameterType="DataCenter">				   
+	    update DataCenter set 
+	    name=#{name}
+	    where id = #{id} 
+	  </insert>
+	  <delete id="deleteVm" >
+    	delete from VirtualMachine 
+	  </delete> 
+	  <delete id="deleteHost" >
+    	delete from HostSystem 
+	  </delete> 
+	  <delete id="deleteDc" >
+    	delete from DataCenter 
+	  </delete> 
+	   <delete id="deleteDatastore" >
+    	delete from DataStore 
+	  </delete>
+</mapper> 

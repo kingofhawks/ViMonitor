@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="src" path="META-INF"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/junit/junit-4.3.1.jar"/>
+	<classpathentry kind="lib" path="lib/mail/activation.jar"/>
+	<classpathentry kind="lib" path="lib/mail/mail.jar"/>
+	<classpathentry kind="lib" path="lib/servlet/javax.servlet.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-beanutils.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-email-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-lang-2.4.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-io-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-httpclient-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/jboss/com.springsource.org.jboss.util-2.0.4.GA.jar"/>
+	<classpathentry kind="lib" path="lib/dom4j/com.springsource.org.dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/log4j/slf4j-log4j12-1.5.6.jar"/>
+	<classpathentry kind="lib" path="lib/log4j/log4j-1.2.13.jar"/>
+	<classpathentry kind="lib" path="lib/log4j/com.springsource.slf4j.api-1.5.6.jar"/>
+	<classpathentry kind="lib" path="lib/jboss/jboss-j2ee.jar"/>
+	<classpathentry kind="lib" path="lib/commons/com.springsource.org.apache.commons.collections-3.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/vmsdk/apputils.jar"/>
+	<classpathentry kind="lib" path="lib/vmsdk/credstore.jar"/>
+	<classpathentry kind="lib" path="lib/vmsdk/samples.jar"/>
+	<classpathentry kind="lib" path="lib/ibatis/ibatis-3-core-3.0.0.242.jar"/>
+	<classpathentry kind="var" path="IBATOR_JAR" sourcepath="IBATOR_JAR_SRC"/>
+	<classpathentry kind="lib" path="lib/postgre/postgresql-8.4-701.jdbc4.jar"/>
+	<classpathentry kind="lib" path="lib/jboss/jboss-ejb3x.jar"/>
+	<classpathentry kind="lib" path="lib/ejb3/jboss-ejb3-ext-api.jar"/>
+	<classpathentry kind="lib" path="lib/quartz/quartz.jar"/>
+	<classpathentry kind="lib" path="lib/axis/axis.jar"/>
+	<classpathentry kind="lib" path="lib/axis/jaxrpc.jar"/>
+	<classpathentry kind="lib" path="lib/vmsdk/vijava2u120091204src.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

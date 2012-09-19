@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss>
+<enterprise-beans>
+<message-driven>
+<ejb-name>QuartzMDB</ejb-name>
+<resource-adapter-name>quartz-ra.rar</resource-adapter-name>
+</message-driven>
+</enterprise-beans>
+</jboss> 

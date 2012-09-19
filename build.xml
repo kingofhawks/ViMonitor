@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="deploy" name="ViMonitor" basedir="." >
+	
+	<!--Property lists for reference later-->
+	<property environment="env"/>
+	<property name="jboss.home" value="${env.JBOSS_HOME}"/>
+	<property name="jboss.deploy" value="server/default/deploy"/>
+	<property name="jboss.deploy.last" value="deploy.last"/>
+	<property name="ejb3.lib" value="${jboss.home}/server/default/deploy/ejb3.deployer"/>
+	<property name="jboss.server" value="${jboss.home}/server/default/lib"/>
+	<property name="src.dir" value="${basedir}/src"/>
+	<property name="classes.dir" value="${basedir}/bin"/>
+	<property name="lib.dir" value="${basedir}/lib"/>	
+	<property name="web-tier.dir" value="com/wereach/vi/web"/>
+	<property name="web-info.dir" value="WEB-INF"/>		
+	<property name="build.dir" value="${basedir}/build"/>
+	<property name="conf.dir" value = "${basedir}/conf"/>
+	<property name="vimonitor.jar" value="${build.dir}/vimonitor.jar"/>
+	<property name="vimonitor.war" value="${build.dir}/vimonitor.war"/>
+	<property name="vimonitor.ear" value="${build.dir}/vimonitor.ear"/>	
+
+	<!--Classpath to compile project-->
+	<path id="compile.classpath">
+		<pathelement path="${lib.dir}" />
+		<fileset dir="${lib.dir}">
+		<include name="**/*.jar"/>
+		</fileset>
+		
+		<pathelement location="${lib.dir}/jboss-ejb3.jar"/>
+		<pathelement location="${ejb3.lib}/jboss-ejb3.jar"/>		
+		<pathelement location="${ejb3.lib}/ejb3-persistence.jar"/>
+		<pathelement location="${ejb3.lib}/jboss-ejb3x.jar"/>
+		<pathelement location="${ejb3.lib}/hibernate-annotations.jar"/>
+		<pathelement location="${ejb3.lib}/jboss-annotations-ejb3.jar"/>
+		<pathelement location="${jboss.server}/jboss-serialization.jar"/>		
+		<pathelement location="${jboss.server}/jboss-j2ee.jar"/>
+		<pathelement location="${jboss.server}/jboss.jar"/>
+		
+	</path>
+
+	<!--Clean  building directory-->
+	<target name="clean" description="Remove all generated files.">
+		<echo message="Clean ViMonitor project..."/>
+		<delete dir="${build.dir}"/>
+		<delete dir="${classes.dir}"/>
+		<delete dir="${jboss.home}/${jboss.deploy}/${jboss.deploy.last}"/>
+	</target>
+	
+	<!--Compile source files-->
+	<target name="compile"   description="Create the building directory, compile source file">
+	  	<mkdir dir="${build.dir}"/>
+	    <mkdir dir="${classes.dir}"/>
+		<mkdir dir="${jboss.home}/${jboss.deploy}/${jboss.deploy.last}"/>
+	  	<echo message="Compile ViMonitor project..."/>
+		<depend srcdir="${src.dir}" destdir="${classes.dir}" cache="${build.dir}/dependencies" closure="true">
+        </depend>
+	 	<javac  srcdir="${src.dir}" destdir="${classes.dir}" debug="true" optimize="true" deprecation="true" >
+	    <classpath refid="compile.classpath"/>
+	 	</javac>
+	</target>
+	
+	<!--Copy xml configuration files -->
+	<target name="resources" description="Copy xml configuration files to relevant classes directory">
+		<copy todir="${classes.dir}" >
+		            <fileset dir="${src.dir}">
+		            <patternset>
+		                <include name="**/*.xml"/>
+		            </patternset>
+		            </fileset>
+		 </copy>	
+	</target>
+	
+	<!--Generate ejb jar package-->
+		<target name="vijar" depends="compile,resources" description="Generate ejb jar">
+			<echo message="Processing ejb jar generation..."/>
+			<jar destfile="${vimonitor.jar}">
+				<!---->
+			<zipfileset dir="${basedir}/META-INF" prefix="META-INF" includes="jboss.xml"/>
+			
+			<zipfileset dir="${classes.dir}" 
+				includes="com/wereach/vi/model/**,
+				com/wereach/vi/iface/**,
+				com/wereach/vi/dao/**,
+				com/wereach/vi/schedule/**,
+				com/wereach/vi/discover/**,
+				com/wereach/vi/util/**"/>
+			</jar>
+		</target>
+	
+	<!--Generate war package-->
+		<target name="viwar" description="Generate war package">
+			<echo message="Processing war package generation..."/>
+			<jar destfile="${vimonitor.war}">	
+				<zipfileset dir="${src.dir}/${web-tier.dir}/WEB-INF" prefix="${web-info.dir}">
+					<include name="web.xml"/>
+					<include name="server-config.wsdd"/>
+				</zipfileset>
+				<zipfileset dir="${classes.dir}" prefix="${web-info.dir}/classes" 
+					 includes="${web-tier.dir}/**/*.class"/>
+				<zipfileset dir="src/${web-tier.dir}" includes="jsp/*.*,js/*.*"/>
+				<zipfileset dir="${lib.dir}/commons" prefix="${web-info.dir}/lib"
+					includes = "commons-beanutils.jar">						
+				</zipfileset>				
+			</jar>			
+		</target>
+
+	
+	<!--Generate ear package-->
+		<target name="ear" description="Generate ear package" depends="vijar,viwar">
+			<echo message="Processing EAR generation..."/>
+			<jar destfile="${vimonitor.ear}">
+			<zipfileset dir="${build.dir}">
+				<include name="vimonitor.jar"/>
+			</zipfileset>
+			
+			<zipfileset dir="${build.dir}">
+				<include name="vimonitor.war"/>
+			</zipfileset>	
+			<zipfileset dir="${basedir}/META-INF" prefix="META-INF">
+				<include name="application.xml"/>
+			</zipfileset>
+			</jar>
+		</target>
+
+
+	<!--Incremental build and deploy ear to JBossAS ,that is to say without cleaning orginal building directory -->
+		<target name="deploy" description="Deploy ear package to JBoss" depends="ear">
+			<echo message="Begin to deploy ear to JBossAS..."/>
+			<copy file="${vimonitor.ear}" todir="${jboss.home}/${jboss.deploy}" />
+			<copy file = "${conf.dir}/postgres-ds.xml" todir = "${jboss.home}/${jboss.deploy}"/>
+			<copy file= "${lib.dir}/postgre/postgresql-8.4-701.jdbc4.jar" todir ="${jboss.server}" />
+			<copy file= "${lib.dir}/commons/commons-lang-2.4.jar" todir ="${jboss.server}" />
+			<copy file= "${lib.dir}/commons/commons-beanutils.jar" todir ="${jboss.server}" />
+			<copy file = "${lib.dir}/commons/commons-email-1.1.jar" todir = "${jboss.server}" />
+			<copy file = "${lib.dir}/commons/commons-httpclient-3.1.jar" todir = "${jboss.server}" />
+			<copy file = "${lib.dir}/commons/commons-io-1.4.jar" todir = "${jboss.server}" />
+			<copy file = "${lib.dir}/ibatis/ibatis-3-core-3.0.0.242.jar" todir = "${jboss.server}" />
+			<!-- axis lib -->
+			<copy file = "${lib.dir}/axis/jaxrpc.jar" todir = "${jboss.server}" />
+			<copy file = "${lib.dir}/axis/axis.jar" todir = "${jboss.server}" />
+			<copy file = "${lib.dir}/axis/axis-ant.jar" todir = "${jboss.server}" />
+			<copy file = "${lib.dir}/axis/commons-discovery-0.2.jar" todir = "${jboss.server}" />
+			<copy file = "${lib.dir}/axis/commons-logging-1.0.4.jar" todir = "${jboss.server}" />
+			<copy file = "${lib.dir}/axis/log4j-1.2.8.jar" todir = "${jboss.server}" />
+			<copy file = "${lib.dir}/axis/saaj.jar" todir = "${jboss.server}" />
+			<copy file = "${lib.dir}/axis/wsdl4j-1.5.1.jar" todir = "${jboss.server}" />
+			<!-- vm sdk lib -->
+			<copy file = "${lib.dir}/vmsdk/apputils.jar" todir = "${jboss.server}" />
+			<copy file = "${lib.dir}/vmsdk/credstore.jar" todir = "${jboss.server}" />
+			<copy file = "${lib.dir}/vmsdk/samples.jar" todir = "${jboss.server}" />
+			<!--<copy file = "${lib.dir}/vmsdk/vim.jar" todir = "${jboss.server}" />-->
+			<copy file = "${lib.dir}/vmsdk/vijava2u120091204src.jar" todir = "${jboss.server}" />			
+						
+		</target>
+	
+	<!--Clean build and deploy ear to JBossAS -->
+		<target name="clean-deploy" depends="clean,deploy">			
+		</target>
+</project>

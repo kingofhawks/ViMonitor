@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE configuration 
+  PUBLIC "-//ibatis.apache.org//DTD Config 3.0//EN" 
+  "http://ibatis.apache.org/dtd/ibatis-3-config.dtd">  
+<configuration> 
+	<typeAliases> 
+	  <typeAlias alias="VirtualMachine" type="com.wereach.vi.model.VirtualMachine"/>	
+	  <typeAlias alias="HostSystem" type="com.wereach.vi.model.HostSystem"/>  
+	  <typeAlias alias="DataStore" type="com.wereach.vi.model.DataStore"/>
+	  <typeAlias alias="DataCenter" type="com.wereach.vi.model.DataCenter"/>
+	  <typeAlias alias="ComputeResource" type="com.wereach.vi.model.ComputeResource"/>
+	  <typeAlias alias="Folder" type="com.wereach.vi.model.Folder"/>
+	</typeAliases> 
+  <environments default="development"> 
+      <environment id="development"> 
+      <transactionManager type="JDBC"/> 
+      <dataSource type="POOLED"> 
+        <property name="driver" value="org.postgresql.Driver"/> 
+        <property name="url" value="jdbc:postgresql://localhost:5432/vimonitor"/> 
+        <property name="username" value="wereach"/> 
+        <property name="password" value="reach1234"/> 
+      </dataSource> 
+    </environment> 
+  </environments> 
+  <mappers> 
+    <mapper resource="com/wereach/vi/dao/mapper/HostSystemMapper.xml"/> 
+    <mapper resource="com/wereach/vi/dao/mapper/VirtualMachineMapper.xml"/>
+    <mapper resource="com/wereach/vi/dao/mapper/DataStoreMapper.xml"/>
+    <mapper resource="com/wereach/vi/dao/mapper/DataCenterMapper.xml"/>
+    <mapper resource="com/wereach/vi/dao/mapper/ComputeResourceMapper.xml"/>
+    <mapper resource="com/wereach/vi/dao/mapper/FolderMapper.xml"/>
+  </mappers> 
+
+</configuration>

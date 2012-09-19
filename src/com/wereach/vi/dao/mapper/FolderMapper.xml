@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper  
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"  
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">  
+<mapper namespace="com.wereach.vi.model.FolderMapper"> 
+	  <cache/> 	    
+	  <resultMap id="FolderResult" type="Folder"> 
+	  		<id property="id" column="folder_id" /> 
+		    <result property="name" column="folder_name"/> 
+		    <association property="dc" javaType="DataCenter" > 
+      			<id property="id" column="dc_id"/> 
+      			<result property="name" column="dc_name"/> 
+    		</association>
+	  </resultMap>
+	  <select id="selectFolder" parameterType="int" resultType="Folder"> 
+	    select * from Folder where id = #{id}  
+	  </select>  
+	  <select id="selectFolderByName" parameterType="String" resultMap="FolderResult"> 
+	    select 
+		    F.id as folder_id, 
+		    F.name as folder_name, 
+		    D.id as dc_id, 
+		    D.name as dc_name
+		    from Folder F 
+		    left outer join DataCenter D on F.dcId = D.id 
+		    where F.name = #{name}
+	  </select> 
+	  <select id="selectAll" resultType="Folder"> 
+	    select * from Folder  
+	  </select>	  
+	    <insert id="insertFolder" parameterType="Folder">
+			 <selectKey keyProperty="id" resultType="int" order="BEFORE">
+		      SELECT nextVal('folder_id_seq')
+		    </selectKey>	   
+	    insert into Folder (id,name,childType,dcId) 
+	    values (#{id},#{name},#{childType},#{dcId}) 
+	  </insert> 
+	   <update id="updateFolder" parameterType="Folder">				   
+	    update Folder set  
+	    name=#{name},childType=#{childType},dcId=#{dcId}
+	    where id = #{id}	    
+	  </update>
+</mapper> 

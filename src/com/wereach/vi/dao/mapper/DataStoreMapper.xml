@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper  
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"  
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">  
+<mapper namespace="com.wereach.vi.model.DataStoreMapper"> 
+	  <cache/> 	    
+	  <select id="selectStore" parameterType="int" resultType="DataStore"> 
+	    select * from DataStore where id = #{id}  
+	  </select>  
+	  <select id="selectStoreByName" parameterType="String" resultType="DataStore"> 
+	    select * from DataStore where name = #{name}  
+	  </select> 
+	  <select id="selectStoreByHost" parameterType="String" resultType="DataStore"> 
+	    select * from DataStore where host = #{host}  
+	  </select> 
+	  <select id="selectAll" resultType="DataStore"> 
+	    select * from DataStore  
+	  </select>	  
+	    <insert id="insertStore" parameterType="DataStore">
+			 <selectKey keyProperty="id" resultType="int" order="BEFORE">
+		      SELECT nextVal('data_store_id_seq')
+		    </selectKey>	   
+	    insert into DataStore (id,name,url,freeSpace,maxFileSize) 
+	    values (#{id},#{name},#{url},#{freeSpace},#{maxFileSize}) 
+	  </insert> 
+	   <update id="updateStore" parameterType="DataStore">				   
+	    update DataStore set  
+	    name=#{name},url=#{url},freeSpace=#{freeSpace},maxFileSize=#{maxFileSize}
+	    where id = #{id}	    
+	  </update>
+</mapper> 

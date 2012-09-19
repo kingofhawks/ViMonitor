@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper  
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"  
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">  
+<mapper namespace="com.wereach.vi.model.HostSystemMapper"> 
+	  <cache/> 
+	  <resultMap id="HostSystemResult" type="HostSystem"> 
+	  		<id property="id" column="host_id" /> 
+		    <result property="hostName" column="host_name"/> 
+		    <result property="ostype" column="ostype"/> 
+		    <result property="vendor" column="vendor"/> 
+		    <result property="dcId" column="dc_id"/>
+		    <collection property="vms" ofType="VirtualMachine">	
+		  		<id property="id" column="vm_id"/> 
+			    <result property="name" column="vm_name"/> 			   
+      		</collection>
+	  </resultMap>
+	  <select id="selectHost" parameterType="int" resultType="HostSystem"> 
+	    select * from HostSystem where id = #{id}  
+	  </select>  
+	  <select id="selectHostsByDataCenter" parameterType="String" resultType="HostSystem"> 
+	    select * from HostSystem h where exists(select * from DataCenter d where d.name =#{name} and d.id = h.dcId)   
+	  </select> 
+	  <select id="selectHostByName" parameterType="String" resultMap="HostSystemResult"> 
+	    select 
+		    H.id as host_id, 
+		    H.hostName as host_name, 
+		    H.dcId as dc_id,
+		    V.id as vm_id, 
+		    V.name as vm_name
+		    from HostSystem H 
+		    left outer join VirtualMachine V on H.id = V.hostid 
+		    where H.hostName = #{hostName}
+	  </select> 
+	  <select id="selectAll" resultType="HostSystem"> 
+	    select * from HostSystem  
+	  </select>
+	    <insert id="insertHost" parameterType="HostSystem">
+			 <selectKey keyProperty="id" resultType="int" order="BEFORE">
+		      SELECT nextVal('host_system_id_seq')
+		    </selectKey>	   
+	    insert into HostSystem (id,hostName,ostype,vendor,resId,dcId) 
+	    values (#{id},#{hostName},#{ostype},#{vendor},#{resId},#{dcId}) 
+	  </insert> 
+	   <update id="updateHost" parameterType="HostSystem">				   
+	    update HostSystem set  
+	    hostName=#{hostName},ostype=#{ostype},vendor=#{vendor},resId=#{resId},dcId=#{dcId}
+	    where id = #{id}	    
+	  </update>
+</mapper> 

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper  
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"  
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">  
+<mapper namespace="com.wereach.vi.model.VirtualMachineMapper"> 
+	  <cache/> 
+	  <resultMap id="VirtualMachineResult" type="VirtualMachine"> 
+	  		<association property="host" column="host" javaType="com.wereach.vi.model.HostSystem" select="selectHost"/> 
+	  </resultMap> 
+	  <select id="selectVirtualMachine" parameterType="int" resultMap="VirtualMachineResult"> 
+	    select * from VirtualMachine where id = #{id}  
+	  </select> 
+	  <select id="selectVirtualMachineForHost" parameterType="int" resultType="VirtualMachine"> 
+	    select * from VirtualMachine where hostId = #{id}  
+	  </select> 
+	  <select id="selectVirtualMachineByName" parameterType="String" resultMap="VirtualMachineResult"> 
+	    select * from VirtualMachine where name = #{name}  
+	  </select>
+	  <select id="selectAll" resultType="VirtualMachine"> 
+	    select * from VirtualMachine  
+	  </select>
+	   <insert id="insertVirtualMachine" parameterType="VirtualMachine">
+			 <selectKey keyProperty="id" resultType="int" order="BEFORE">
+		      SELECT nextVal('vm_id_seq')
+		    </selectKey>	   
+	    insert into VirtualMachine (id,name,memorySize,cpuCount,ostype,hostid) 
+	    values (#{id},#{name},#{memorySize},#{cpuCount},#{ostype},#{hostId}) 
+	  </insert> 
+	  <update id="updateVirtualMachine" parameterType="VirtualMachine">				   
+	    update VirtualMachine set  
+	    name=#{name},memorySize=#{memorySize},
+	    cpuCount=#{cpuCount},ostype=#{ostype}
+	    where id = #{id}	    
+	  </update>
+</mapper> 
